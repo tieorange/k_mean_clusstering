@@ -74,16 +74,16 @@ def moving_centroids(centroids):
             new_x /= len(groups_of_centroid_and_points[center_idx])  # to find average we have to divide sum by size
             new_y /= len(groups_of_centroid_and_points[center_idx])
 
-            dx = abs(centroids[center_idx][0] - new_x)
-            dy = abs(centroids[center_idx][1] - new_y)
+            delta_x = abs(centroids[center_idx][0] - new_x)  # to check if centroid stopped moving
+            delta_y = abs(centroids[center_idx][1] - new_y)
 
-            if dx < 0.1 and dy < 0.1:
-                count += 1
+            if delta_x == 0 and delta_y == 0:
+                count += 1  # one of centroid stopped moving
 
             centroids[center_idx][0] = new_x
             centroids[center_idx][1] = new_y
 
-        if count == 3:
+        if count == 3:  # all of centroids has stopped moving
             stop = True
 
 
