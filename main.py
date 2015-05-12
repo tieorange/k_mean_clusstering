@@ -64,15 +64,16 @@ while not stop:
                 min_idx = center
                 dist_min = dist
         classes[min_idx].append(xy[idx])
-        new_last = [classes[0][-1], classes[1][-1], classes[2][-1]]
-        if (last[0] == classes[0][-1]) and (last[1] == classes[1][-1]) and (last[2] == classes[2][-1]):
-                stop = True
-        else:
-            last[0] = classes[0][-1]
-            last[1] = classes[1][-1]
-            last[2] = classes[2][-1]
 
     classes = numpy.array(classes)
+
+    new_last = [classes[0][-1], classes[1][-1], classes[2][-1]]
+    if numpy.array_equal(new_last, last):
+        stop = True
+    else:
+        last[0] = classes[0][-1]
+        last[1] = classes[1][-1]
+        last[2] = classes[2][-1]
 
     for center in range(len(centroids)):
         new_x, new_y = 0, 0
@@ -83,10 +84,9 @@ while not stop:
         centroids[center][1] = new_y / len(classes)
 
 plt.scatter(centroids[:, 0], centroids[:, 1], marker='x', s=500, linewidths=4, color='green')
-
 plt.scatter(x, y)
 
 plt.show()
 
 
-# ====
+        # ====
