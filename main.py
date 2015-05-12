@@ -37,17 +37,18 @@ y = xy[:, 1]
 # get 3 randoms
 
 
-def onclick(event):
+def get_centroids():
     centroids = []
     for r in range(3):
         random_index = random.uniform(0, len(xy))
         centroids.append(xy[random_index])
-
     centroids = numpy.array(centroids)
+    return centroids
 
+
+def moving_centroids(centroids):
     # ====== PUNKT 3 process of magnetizing
     stop = False
-
     while not stop:
         groups = [[], [], []]
         for idx in range(len(xy)):
@@ -55,7 +56,8 @@ def onclick(event):
             dist_min = numpy.sqrt((xy[idx][0] - centroids[0][0]) ** 2 + (xy[idx][1] - centroids[0][1]) ** 2)
             min_idx = 0
             for center_idx in range(len(centroids)):
-                dist = numpy.sqrt((xy[idx][0] - centroids[center_idx][0]) ** 2 + (xy[idx][1] - centroids[center_idx][1]) ** 2)
+                dist = numpy.sqrt(
+                    (xy[idx][0] - centroids[center_idx][0]) ** 2 + (xy[idx][1] - centroids[center_idx][1]) ** 2)
                 if dist < dist_min:
                     min_idx = center_idx
                     dist_min = dist
@@ -84,6 +86,12 @@ def onclick(event):
 
         if count == 3:
             stop = True
+
+
+def onclick(event):
+    centroids = get_centroids()
+
+    moving_centroids(centroids)
 
     centroids = numpy.array(centroids)
     update_line(centroids)
