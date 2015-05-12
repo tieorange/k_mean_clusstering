@@ -6,10 +6,6 @@ import numpy
 
 style.use("ggplot")
 
-
-def dist(param_a, param_b):
-    return numpy.sqrt(numpy.sum((param_a - param_b) ** 2))
-
 # === CONSTANTS
 rand_from = 0
 rand_to = 20
@@ -40,53 +36,67 @@ y = xy[:, 1]
 
 # get 3 randoms
 
-centroids = []
-for r in range(3):
-    random_index = random.uniform(0, len(xy))
-    centroids.append(xy[random_index])
+hl, = plt.plot([], [])
 
-# print("centroids = ", centroids)
 
-centroids = numpy.array(centroids)
+def onclick(event):
+    centroids = []
+    for r in range(3):
+        random_index = random.uniform(0, len(xy))
+        centroids.append(xy[random_index])
 
-stop = False
-last = [[0, 0], [0, 0], [0, 0]]
+    # print("centroids = ", centroids)
 
-while not stop:
-    classes = [[], [], []]
-    for idx in range(len(xy)):
-        # Eucledean distance
-        dist_min = numpy.sqrt((xy[idx][0] - centroids[0][0]) ** 2 + (xy[idx][1] - centroids[0][1]) ** 2)
-        min_idx = 0
+    centroids = numpy.array(centroids)
+
+    # ====== PUNKT 3 process of magnetizing
+    stop = False
+
+    while not stop:
+        groups = [[], [], []]
+        for idx in range(len(xy)):
+            # Eucledean distance
+            dist_min = numpy.sqrt((xy[idx][0] - centroids[0][0]) ** 2 + (xy[idx][1] - centroids[0][1]) ** 2)
+            min_idx = 0
+            for center in range(len(centroids)):
+                dist = numpy.sqrt((xy[idx][0] - centroids[center][0]) ** 2 + (xy[idx][1] - centroids[center][1]) ** 2)
+                if dist < dist_min:
+                    min_idx = center
+                    dist_min = dist
+            groups[min_idx].append(xy[idx])
+        print(len(groups[2]))
+
+        count = 0
         for center in range(len(centroids)):
-            dist = numpy.sqrt((xy[idx][0] - centroids[center][0]) ** 2 + (xy[idx][1] - centroids[center][1]) ** 2)
-            if dist < dist_min:
-                min_idx = center
-                dist_min = dist
-        classes[min_idx].append(xy[idx])
+            new_x, new_y = 0, 0
 
-    classes = numpy.array(classes)
+            for avg in range(len(groups[center])):
+                new_x += groups[center][avg][0]
+                new_y += groups[center][avg][1]
 
-    new_last = [classes[0][-1], classes[1][-1], classes[2][-1]]
-    if numpy.array_equal(new_last, last):
-        stop = True
-    else:
-        last[0] = classes[0][-1]
-        last[1] = classes[1][-1]
-        last[2] = classes[2][-1]
+            new_x /= len(groups[center])
+            new_y /= len(groups[center])
 
-    for center in range(len(centroids)):
-        new_x, new_y = 0, 0
-        for avg in range(len(classes)):
-            new_x += classes[center][avg][0]
-            new_y += classes[center][avg][1]
-        centroids[center][0] = new_x / len(classes)
-        centroids[center][1] = new_y / len(classes)
+            dx = abs(centroids[center][0] - new_x)
+            dy = abs(centroids[center][1] - new_y)
+
+            if dx < 0.1 and dy < 0.1:
+                count += 1
+
+            centroids[center][0] = new_x
+            centroids[center][1] = new_y
+
+        if count == 3:
+            stop = True
+
 
 plt.scatter(centroids[:, 0], centroids[:, 1], marker='x', s=500, linewidths=4, color='green')
 plt.scatter(x, y)
 
+fig = plt.gcf()
+cid = fig.canvas.mpl_connect('button_press_event', onclick)
+
 plt.show()
 
 
-        # ====
+# ====
