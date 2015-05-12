@@ -102,4 +102,4 @@ fig = plt.figure()
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
 plt.ion()
 plt.show()
-# ====
+# ====dg
