@@ -36,7 +36,7 @@ y = xy[:, 1]
 
 # get 3 randoms
 
-hl, = plt.plot([], [])
+graph, = plt.scatter(x, y)
 
 
 def onclick(event):
@@ -44,8 +44,6 @@ def onclick(event):
     for r in range(3):
         random_index = random.uniform(0, len(xy))
         centroids.append(xy[random_index])
-
-    # print("centroids = ", centroids)
 
     centroids = numpy.array(centroids)
 
@@ -89,14 +87,22 @@ def onclick(event):
         if count == 3:
             stop = True
 
+    centroids = numpy.array(centroids)
+    update_line(graph, centroids)
 
-plt.scatter(centroids[:, 0], centroids[:, 1], marker='x', s=500, linewidths=4, color='green')
-plt.scatter(x, y)
 
-fig = plt.gcf()
+def update_line(hl, new_data):
+    hl.set_xdata(numpy.append(hl.get_xdata(), x))
+    hl.set_ydata(numpy.append(hl.get_ydata(), y))
+
+    hl.set_xdata(numpy.append(hl.get_xdata(), new_data[:, 0]))
+    hl.set_ydata(numpy.append(hl.get_ydata(), new_data[:, 1]))
+
+    plt.draw()
+
+
+fig = plt.figure()
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
 
 plt.show()
-
-
 # ====
