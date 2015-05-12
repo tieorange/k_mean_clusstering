@@ -36,8 +36,7 @@ y = xy[:, 1]
 
 # get 3 randoms
 
-graph, = plt.scatter(x, y)
-
+graph = plt.scatter(x, y)
 
 def onclick(event):
     centroids = []
@@ -56,33 +55,33 @@ def onclick(event):
             # Eucledean distance
             dist_min = numpy.sqrt((xy[idx][0] - centroids[0][0]) ** 2 + (xy[idx][1] - centroids[0][1]) ** 2)
             min_idx = 0
-            for center in range(len(centroids)):
-                dist = numpy.sqrt((xy[idx][0] - centroids[center][0]) ** 2 + (xy[idx][1] - centroids[center][1]) ** 2)
+            for center_idx in range(len(centroids)):
+                dist = numpy.sqrt((xy[idx][0] - centroids[center_idx][0]) ** 2 + (xy[idx][1] - centroids[center_idx][1]) ** 2)
                 if dist < dist_min:
-                    min_idx = center
+                    min_idx = center_idx
                     dist_min = dist
             groups[min_idx].append(xy[idx])
         print(len(groups[2]))
 
         count = 0
-        for center in range(len(centroids)):
+        for center_idx in range(len(centroids)):
             new_x, new_y = 0, 0
 
-            for avg in range(len(groups[center])):
-                new_x += groups[center][avg][0]
-                new_y += groups[center][avg][1]
+            for avg_idx in range(len(groups[center_idx])):
+                new_x += groups[center_idx][avg_idx][0]
+                new_y += groups[center_idx][avg_idx][1]
 
-            new_x /= len(groups[center])
-            new_y /= len(groups[center])
+            new_x /= len(groups[center_idx])
+            new_y /= len(groups[center_idx])
 
-            dx = abs(centroids[center][0] - new_x)
-            dy = abs(centroids[center][1] - new_y)
+            dx = abs(centroids[center_idx][0] - new_x)
+            dy = abs(centroids[center_idx][1] - new_y)
 
             if dx < 0.1 and dy < 0.1:
                 count += 1
 
-            centroids[center][0] = new_x
-            centroids[center][1] = new_y
+            centroids[center_idx][0] = new_x
+            centroids[center_idx][1] = new_y
 
         if count == 3:
             stop = True
@@ -92,17 +91,15 @@ def onclick(event):
 
 
 def update_line(hl, new_data):
-    hl.set_xdata(numpy.append(hl.get_xdata(), x))
-    hl.set_ydata(numpy.append(hl.get_ydata(), y))
+    plt.clf()
+    plt.scatter(x, y)
 
-    hl.set_xdata(numpy.append(hl.get_xdata(), new_data[:, 0]))
-    hl.set_ydata(numpy.append(hl.get_ydata(), new_data[:, 1]))
-
+    plt.scatter(new_data[:, 0], new_data[:, 1], s=500, c='g', marker='x')
     plt.draw()
 
 
 fig = plt.figure()
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
-
+plt.ion()
 plt.show()
 # ====
